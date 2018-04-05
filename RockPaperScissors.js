@@ -1,5 +1,7 @@
 
 $(document).ready( function() {
+
+
   function prepare(){
     readyToChoose = false;
     setTimeout(
@@ -43,14 +45,18 @@ $(document).ready( function() {
   "use strict";
   var points = 0;
   var readyToChoose = true;
-  console.log(readyToChoose);
+  
+
   $("#save").click(function(){
     var msg = {
-      "messageType": "SAVE",
-      "score": parseFloat($("#points").text())
+      messageType: "SAVE",
+      gameState: {
+          score: parseFloat($("#points").text())
+      }
+      
     };
     window.parent.postMessage(msg, "*");
-    console.log(msg);
+   
   });
 
   $("#load").click(function(){
@@ -154,4 +160,26 @@ $(document).ready( function() {
       }
     }
   });
+
+  function loadState(state){
+    
+    $("#points").text(state.score);
+  }
+
+  // Listener for getting the saved state back to game
+    window.addEventListener("message", receiveMessage);
+
+    // Function for setting the saved data
+    function receiveMessage(event){
+        if(event.data.messageType == "ERROR"){
+          alert(event.data.info);
+        }else{
+          loadState(event.data.gameState);
+          alert("Game loaded!");
+        }
+        
+        
+    }
+
+
 });
